@@ -6,10 +6,10 @@ Note that this project is set to work with the GNU toolchain (gdb, g++) and libd
 	</Description>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="-std=c++14;$(shell pkg-config --cflags libdaadtmf)" C_Options="-std=c99;$(shell pkg-config --cflags libdaadtmf)" Assembler="">
+      <Compiler Options="-std=c++14;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libdaadtmf)" C_Options="-std=c99;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libdaadtmf)" Assembler="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="$(shell pkg-config --libs libdaadtmf)">
+      <Linker Options="$(shell pkg-config --libs piduino);$(shell pkg-config --libs libdaadtmf)">
         <LibraryPath Value="."/>
       </Linker>
       <ResourceCompiler Options=""/>
@@ -39,8 +39,8 @@ Note that this project is set to work with the GNU toolchain (gdb, g++) and libd
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
-        <SearchPaths>/usr/include/modbuspp
-/usr/local/include/modbuspp</SearchPaths>
+        <SearchPaths>/usr/include/daadtmf
+/usr/local/include/daadtmf</SearchPaths>
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -69,8 +69,8 @@ Note that this project is set to work with the GNU toolchain (gdb, g++) and libd
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
-        <SearchPaths>/usr/include/modbuspp
-/usr/local/include/modbuspp</SearchPaths>
+        <SearchPaths>/usr/include/daadtmf
+/usr/local/include/daadtmf</SearchPaths>
       </Completion>
     </Configuration>
   </Settings>

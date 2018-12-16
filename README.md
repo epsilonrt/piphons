@@ -1,4 +1,4 @@
-# daa-dtmf-shield  
+# daadtmf
 _Phone line interface with DTMF decoder for Pi board_
 
 <a href="https://www.oshwa.org/">
@@ -27,7 +27,7 @@ known under the trademark Touch-Tone for use in push-button telephones supplied
 to telephone customers, starting in 1963.
 
 <p align="center"> 
-  <a href="https://raw.githubusercontent.com/epsilonrt/daa-dtmf-shield/master/extras/images/daa-dtmf-shield.ogg">
+  <a href="https://raw.githubusercontent.com/epsilonrt/daadtmf/master/extras/images/daa-dtmf-shield.ogv">
     <img src="extras/images/daa-dtmf-shield.png" alt="The DAA-DTMF shield PCB">
   </a>
 </p>

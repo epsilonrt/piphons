@@ -24,11 +24,11 @@ endif()
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
   
 file(GLOB src_daadtmf  ${DAADTMF_SRC_DIR}/*.cpp)
-list(REMOVE_ITEM src_daadtmf ${DAADTMF_SRC_DIR}/daadtmf.cpp)
 
 set (hdr_daadtmf 
   ${DAADTMF_INC_DIR}/global.h
   ${DAADTMF_INC_DIR}/daadtmf.h
+  ${DAADTMF_INC_DIR}/daatoueris.h
 )
 
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
@@ -36,7 +36,7 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 
 set(hdr_public ${hdr_daadtmf} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-set (libsrc ${DAADTMF_SRC_DIR}/daadtmf.cpp  ${src_daadtmf})
+set (libsrc  ${src_daadtmf})
 
 include_directories(BEFORE
   ${PIDUINO_INCLUDE_DIRS} 

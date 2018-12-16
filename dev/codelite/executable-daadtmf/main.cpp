@@ -2,29 +2,40 @@
 // This example code is in the public domain.
 #include <iostream>
 #include <daadtmf.h>
+#include <Arduino.h> // Piduino Arduino API
 
 using namespace std;
-using namespace Modbus;
+
+const int ringPin = 6;  // Header Pin 22: GPIO6 for RPi, GPIOA1 for NanoPi
+// <DANGER> Be careful !!! Before launching this program :
+//    -> Check that the pin below is well connected to an LED ! <-
+const int offhookPin = 22; // Header Pin 31: GPIO22 for RPi, GPIOA21 for NanoPi
+
+// -----------------------------------------------------------------------------
+void ringIsr (Daa * daa) {
+
+  cout << daa->ringingSinceHangup() << flush;
+}
+
+// -----------------------------------------------------------------------------
+void offhookIsr (Daa * daa) {
+
+  cout << endl << "off-hook !" << endl << "Waiting DTMF key..." << endl;
+}
 
 // -----------------------------------------------------------------------------
 int main (int argc, char **argv) {
+  Daa daa (ringPin, offhookPin, false, true);
 
-  Master mb (Rtu, port, "19200E1"); // new master on RTU
-  // if you have to handle the DE signal of the line driver with RTS,
-  // you should uncomment the lines below...
-  // mb.rtu().setRts(RtsDown);
-  // mb.rtu().setSerialMode(Rs485);
+  daa.setRingingHandler (ringIsr);
+  daa.setOffhookHandler (offhookIsr);
 
-  if (mb.open ()) { // open a connection
-    // success, do what you want here
-    uint16_t value;
+  while (!daa.isOffhook()) {
 
-    mb.setSlave (8); // to the slave at address 8
-    mb.readInputRegistrers (1, &value);
-    // ....
-    mb.close();
+    delay (1000);
   }
 
+  daa.hangup();
   return 0;
 }
 /* ========================================================================== */
