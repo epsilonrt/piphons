@@ -1,4 +1,4 @@
-# daadtmf
+# piphons
 _Phone line interface with DTMF decoder for Pi board_
 
 <a href="https://www.oshwa.org/">
@@ -27,8 +27,8 @@ known under the trademark Touch-Tone for use in push-button telephones supplied
 to telephone customers, starting in 1963.
 
 <p align="center"> 
-  <a href="https://raw.githubusercontent.com/epsilonrt/daadtmf/master/extras/images/daa-dtmf-shield.ogv">
-    <img src="extras/images/daa-dtmf-shield.png" alt="The DAA-DTMF shield PCB">
+  <a href="https://raw.githubusercontent.com/epsilonrt/piphons/master/extras/images/piphons-shield.ogv">
+    <img src="extras/images/piphons-shield.png" alt="The DAA-DTMF shield PCB">
   </a>
 </p>
 
@@ -38,7 +38,7 @@ Its features are as follows :
 
 Published in open-source hardware, it comes with :  
 * this library,  
-* [electronic schematic](extras/hardware/daa-dtmf-shield-sch.pdf),  
+* [electronic schematic](extras/hardware/piphons-shield-sch.pdf),  
 * [manufacturing files](extras/hardware/gerber) and [Proteus CAD files](extras/hardware/proteus).
 
 ## How to connect your shield to your board ?

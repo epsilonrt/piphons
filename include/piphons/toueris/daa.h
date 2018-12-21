@@ -14,18 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the libpiphons Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef PIPHONS_TOUERIS_DAA_H
+#define PIPHONS_TOUERIS_DAA_H
 
-#ifndef PIPHONS_CONFIG_H_
-#define PIPHONS_CONFIG_H_
+#include <piphons/daa.h>
+
+namespace Toueris {
+
+  /**
+   * @class DaaToueris
+   * @brief DAA for Toueris project
+   */
+  class Daa : public Piphons::Daa {
+    public:
+      Daa (int ringPin, int offhookLed, int offhookSetPin,  int offhookResetPin);
+
+    protected:
+      class Private;
+      Daa (Private &dd);
+
+    private:
+      PIMP_DECLARE_PRIVATE (Daa)
+  };
+
+}
 /* ========================================================================== */
-
-#define PIPHONS_VERSION       "@PIPHONS_VERSION_STRING@"
-#define PIPHONS_VERSION_SHORT "@PIPHONS_VERSION_SHORT@"
-#define PIPHONS_VERSION_TINY  "@PIPHONS_VERSION_TINY@"
-#define PIPHONS_VERSION_MAJOR @PIPHONS_VERSION_MAJOR@
-#define PIPHONS_VERSION_MINOR @PIPHONS_VERSION_MINOR@
-#define PIPHONS_VERSION_PATCH @PIPHONS_VERSION_PATCH@
-#define PIPHONS_VERSION_SHA1  @PIPHONS_VERSION_SHA1@
-
-/* ========================================================================== */
-#endif /* PIPHONS_CONFIG_H_ defined */
+#endif /* PIPHONS_TOUERIS_DAA_H defined */

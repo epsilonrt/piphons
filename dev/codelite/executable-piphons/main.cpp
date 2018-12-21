@@ -1,7 +1,7 @@
-// libdaadtmf template
+// libpiphons template
 // This example code is in the public domain.
 #include <iostream>
-#include <daadtmf.h>
+#include <piphons.h>
 #include <Arduino.h> // Piduino Arduino API
 
 using namespace std;

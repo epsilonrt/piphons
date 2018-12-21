@@ -2,14 +2,14 @@
 <CodeLite_Project Name="Simple executable (C++ DAA DTMF)" InternalType="Console" IconIndex="console16">
   <Description>
 		A project that produces an executable.
-Note that this project is set to work with the GNU toolchain (gdb, g++) and libdaadtmf
+Note that this project is set to work with the GNU toolchain (gdb, g++) and libpiphons
 	</Description>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="-std=c++14;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libdaadtmf)" C_Options="-std=c99;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libdaadtmf)" Assembler="">
+      <Compiler Options="-std=c++14;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libpiphons)" C_Options="-std=c99;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libpiphons)" Assembler="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="$(shell pkg-config --libs piduino);$(shell pkg-config --libs libdaadtmf)">
+      <Linker Options="$(shell pkg-config --libs piduino);$(shell pkg-config --libs libpiphons)">
         <LibraryPath Value="."/>
       </Linker>
       <ResourceCompiler Options=""/>
@@ -39,8 +39,8 @@ Note that this project is set to work with the GNU toolchain (gdb, g++) and libd
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
-        <SearchPaths>/usr/include/daadtmf
-/usr/local/include/daadtmf</SearchPaths>
+        <SearchPaths>/usr/include/piphons
+/usr/local/include/piphons</SearchPaths>
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -69,8 +69,8 @@ Note that this project is set to work with the GNU toolchain (gdb, g++) and libd
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
-        <SearchPaths>/usr/include/daadtmf
-/usr/local/include/daadtmf</SearchPaths>
+        <SearchPaths>/usr/include/piphons
+/usr/local/include/piphons</SearchPaths>
       </Completion>
     </Configuration>
   </Settings>

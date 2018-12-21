@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="libdaadtmf" Version="10.0.0" InternalType="Console">
+<CodeLite_Project Name="libpiphons" Version="10.0.0" InternalType="Console">
+  <VirtualDirectory Name="src">
+    <VirtualDirectory Name="toueris">
+      <File Name="src/toueris/daa.cpp"/>
+    </VirtualDirectory>
+    <File Name="src/daa_p.h"/>
+    <File Name="src/daa.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="piphons">
+      <VirtualDirectory Name="toueris">
+        <File Name="include/piphons/toueris/daa.h"/>
+      </VirtualDirectory>
+      <File Name="include/piphons/daa.h"/>
+      <File Name="include/piphons/global.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <VirtualDirectory Name="dev">
     <VirtualDirectory Name="codelite">
-      <VirtualDirectory Name="executable-daadtmf">
-        <File Name="dev/codelite/executable-daadtmf/main.cpp"/>
+      <VirtualDirectory Name="executable-piphons">
+        <File Name="dev/codelite/executable-piphons/main.cpp"/>
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="bin">
@@ -25,29 +41,19 @@
       <File Name="lib/CMakeLists.txt"/>
     </VirtualDirectory>
     <File Name="lib/config.h.in"/>
-    <File Name="lib/libdaadtmf.pc.in"/>
-    <File Name="lib/libdaadtmf-config.cmake.in"/>
-    <File Name="lib/libdaadtmf-config-version.cmake.in"/>
+    <File Name="lib/libpiphons.pc.in"/>
+    <File Name="lib/libpiphons-config.cmake.in"/>
+    <File Name="lib/libpiphons-config-version.cmake.in"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="daadtmf">
+  <VirtualDirectory Name="piphons">
     <File Name="AUTHORS"/>
     <File Name="cmake_uninstall.cmake.in"/>
     <File Name="COPYING.LESSER"/>
     <File Name="README.md"/>
     <File Name="COPYING"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="include">
-    <File Name="include/daadtmf.h"/>
-    <File Name="include/global.h"/>
-    <File Name="include/daatoueris.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="src">
-    <File Name="src/daadtmf.cpp"/>
-    <File Name="src/daadtmf_p.h"/>
-    <File Name="src/daatoueris.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

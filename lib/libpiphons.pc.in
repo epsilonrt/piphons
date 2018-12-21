@@ -3,14 +3,14 @@ exec_prefix=${prefix}
 bindir=@INSTALL_BIN_DIR@
 libdir=@INSTALL_LIB_DIR@
 includedir=@INSTALL_INCLUDE_DIR@
-ldflags_other=@DAADTMF_LDFLAGS_PKGCONFIG@
-cflags_other=@DAADTMF_CFLAGS_PKGCONFIG@
+ldflags_other=@PIPHONS_LDFLAGS_PKGCONFIG@
+cflags_other=@PIPHONS_CFLAGS_PKGCONFIG@
 
 Name: lib@PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@
-URL: https://github.com/epsilonrt/daa-dtmf-shield
-Version: @DAADTMF_VERSION@
+URL: https://github.com/epsilonrt/piphons
+Version: @PIPHONS_VERSION@
 Requires: 
-Libs: -L${libdir} -ldaadtmf ${ldflags_other}
+Libs: -L${libdir} -lpiphons ${ldflags_other}
 Cflags: -I${includedir} ${cflags_other}
 
