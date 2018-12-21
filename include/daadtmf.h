@@ -29,6 +29,9 @@ class Daa {
     typedef void (*DaaHandler) (Daa * line);
 
     Daa (int ringPin, int offhookPin, bool ringEnabledLevel = false, bool offhookEnabledLevel = false);
+    Daa (const Daa & other);
+    void swap (Daa &other);
+    Daa& operator= (const Daa &other);
     ~Daa();
 
     void setRingingHandler (DaaHandler handler);
@@ -45,10 +48,11 @@ class Daa {
     }
 
     void setRingingBeforeOffhook (int count);
-    void setHookFlash (bool value);
-    
-    bool hookFlash() const;
     int ringingBeforeOffhook() const;
+
+    void setHookFlash (bool value);
+    bool hookFlash() const;
+
     int ringingSinceHangup() const;
 
   protected:

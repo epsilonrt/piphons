@@ -17,7 +17,7 @@
 #ifndef DAADTMF_PRIVATE_H
 #define DAADTMF_PRIVATE_H
 
-#include <mutex>
+#include <shared_mutex>
 #include <cerrno>
 #include <piduino/gpio.h>
 #include <piduino/gpiopin.h>
@@ -28,6 +28,7 @@ using namespace Piduino;
 class Daa::Private {
   public:
     Private (Daa * q, int ringPin, int offhookPin, bool ringEnabledLevel, bool offhookEnabledLevel);
+    Private (const Private & other);
     virtual ~Private();
 
     Daa * const q_ptr;
@@ -42,7 +43,8 @@ class Daa::Private {
     unsigned long lastRinging;
     bool hookFlash;
     bool isOpen;
-    std::mutex mutex;
+    // must remain the last ...
+    mutable std::shared_timed_mutex mut;
 
     virtual bool isOffhook () const;
     virtual void offhook (bool value);

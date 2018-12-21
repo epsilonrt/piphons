@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="daadtmf" Database="" Version="10.0.0">
   <Project Name="libdaadtmf" Path="libdaadtmf.project" Active="Yes"/>
-  <Project Name="executable-daadtmf" Path="dev/codelite/executable-daadtmf/executable-daadtmf.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="libdaadtmf" ConfigName="Debug"/>
-      <Project Name="libdaadtmf" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
-      <Project Name="libdaadtmf" ConfigName="Release"/>
       <Project Name="libdaadtmf" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

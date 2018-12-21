@@ -25,11 +25,42 @@
 
 // -----------------------------------------------------------------------------
 Daa::Private::Private (Daa * q, int rp, int ohp, bool rel, bool ohel) :
-  q_ptr (q), ringPin (gpio.pin (rp)), offhookPin (gpio.pin (ohp)) ,
-  ringEnabledLevel (rel), offhookEnabledLevel (ohel),
-  ringingBeforeOffhook (8), ringingSinceHangup (0),
-  userRingingHandler (0), userOffhookHandler (0), lastRinging (0),
-  hookFlash (false), isOpen (false) {}
+  q_ptr (q),
+  ringPin (gpio.pin (rp)),
+  offhookPin (gpio.pin (ohp)) ,
+  ringEnabledLevel (rel),
+  offhookEnabledLevel (ohel),
+  ringingBeforeOffhook (8),
+  ringingSinceHangup (0),
+  userRingingHandler (0),
+  userOffhookHandler (0),
+  lastRinging (0),
+  hookFlash (false),
+  isOpen (false) {}
+
+// -----------------------------------------------------------------------------
+Daa::Private::Private (const Daa::Private & other) :
+  q_ptr (other.q_ptr),
+  ringPin (other.ringPin),
+  offhookPin (other.offhookPin) ,
+  ringEnabledLevel (other.ringEnabledLevel),
+  offhookEnabledLevel (other.offhookEnabledLevel) {
+
+  // requires exclusive ownership to write to *this
+  std::unique_lock<std::shared_timed_mutex> lhs (mut, std::defer_lock);
+  // requires shared ownership to read from other
+  std::shared_lock<std::shared_timed_mutex> rhs (other.mut, std::defer_lock);
+  std::lock (lhs, rhs);
+
+  // assign data
+  ringingBeforeOffhook = other.ringingBeforeOffhook;
+  ringingSinceHangup = other.ringingSinceHangup;
+  userRingingHandler = other.userRingingHandler;
+  userOffhookHandler = other.userOffhookHandler;
+  lastRinging = other.lastRinging;
+  hookFlash = other.hookFlash;
+  isOpen = other.isOpen;
+}
 
 // -----------------------------------------------------------------------------
 Daa::Private::~Private() = default;
@@ -71,7 +102,12 @@ void Daa::Private::close() {
 
 /*
  *                      Isr   User
+  q_ptr                 r     r
+  ringPin               r     r
+  offhookPin            rw    rw
+  //
   ringingSinceHangup    rw    r
+  //
   hookFlash             r     rw
   userRingingHandler    r     w
   userOffhookHandler    r     w
@@ -80,39 +116,65 @@ void Daa::Private::close() {
 
 // -----------------------------------------------------------------------------
 void Daa::Private::ringIsr (void * data) {
-  unsigned long now = clk.millis();
-  Private * d = reinterpret_cast<Daa::Private *> (data);
-  unsigned long dt = now - d->lastRinging;
-  bool hookFlash = false;
+  Private * d;
+  bool hookFlash;
+  int ringingSinceHangup;
+  int ringingBeforeOffhook;
+  DaaHandler userRingingHandler;
+  DaaHandler userOffhookHandler;
+  bool offhookQuickly;
+  unsigned long now;
+  unsigned long dt;
 
+  now = clk.millis();
+  d = reinterpret_cast<Daa::Private *> (data);
+  dt = now - d->lastRinging;
   d->lastRinging = now;
-  if ( (d->ringingSinceHangup > 0) && (dt > 7000)) {
+  ringingSinceHangup = d->ringingSinceHangup;
+  offhookQuickly = false;
 
-    if ( (d->hookFlash) && (d->ringingSinceHangup == 1) && (dt <= 60000)) {
+  {
+    // requires shared ownership to read from other this data
+    std::shared_lock<std::shared_timed_mutex> lk (d->mut);
+    hookFlash = d->hookFlash;
+    ringingBeforeOffhook = d->ringingBeforeOffhook;
+    userRingingHandler = d->userRingingHandler;
+    userOffhookHandler = d->userOffhookHandler;
+  }
 
-      hookFlash = true;
+  if ( (ringingSinceHangup > 0) && (dt > 7000)) {
+
+    if ( (hookFlash) && (ringingSinceHangup <= 3) && (dt <= 60000)) {
+
+      offhookQuickly = true;
     }
     else {
 
-      d->ringingSinceHangup = 0;
+      ringingSinceHangup = 0;
     }
   }
-  d->ringingSinceHangup++;
-  d->ringPin.read();  // phony reading, to erase the irq !
+  ringingSinceHangup++;
+  d->ringPin.read();  // phony reading, to erase irq !
 
-  if (d->userRingingHandler) {
+  {
+    // requires exclusive ownership to write to ringingSinceHangup
+    std::lock_guard<std::shared_timed_mutex> lk (d->mut);
+    d->ringingSinceHangup = ringingSinceHangup;
+  }
 
-    d->userRingingHandler (d->q_ptr);
+  if (userRingingHandler) {
+
+    userRingingHandler (d->q_ptr);
   }
 
   if (!d->isOffhook()) {
 
-    if ( (d->ringingSinceHangup >= d->ringingBeforeOffhook) || hookFlash) {
+    if ( (ringingSinceHangup >= ringingBeforeOffhook) || offhookQuickly) {
 
       d->offhook (true);
-      if (d->userOffhookHandler) {
+      if (userOffhookHandler) {
 
-        d->userOffhookHandler (d->q_ptr);
+        userOffhookHandler (d->q_ptr);
       }
     }
   }
@@ -134,6 +196,23 @@ Daa::Daa (Daa::Private &dd) : d_ptr (&dd) {}
 // -----------------------------------------------------------------------------
 Daa::Daa (int rp, int ohp, bool rel, bool ohel) :
   d_ptr (new Private (this, rp, ohp, rel, ohel)) {}
+
+// ---------------------------------------------------------------------------
+Daa::Daa (const Daa & other) :
+  d_ptr (new Private (*other.d_ptr)) {}
+
+// ---------------------------------------------------------------------------
+void Daa::swap (Daa &other) {
+
+  d_ptr.swap (other.d_ptr);
+}
+
+// ---------------------------------------------------------------------------
+Daa& Daa::operator= (const Daa &other) {
+
+  Daa (other).swap (*this);
+  return *this;
+}
 
 // -----------------------------------------------------------------------------
 Daa::~Daa() {
@@ -167,6 +246,7 @@ void Daa::close() {
 void Daa::setRingingHandler (DaaHandler handler) {
   PIMP_D (Daa);
 
+  std::lock_guard<std::shared_timed_mutex> lk (d->mut);
   d->userRingingHandler = handler;
 }
 
@@ -174,6 +254,7 @@ void Daa::setRingingHandler (DaaHandler handler) {
 void Daa::setOffhookHandler (DaaHandler handler) {
   PIMP_D (Daa);
 
+  std::lock_guard<std::shared_timed_mutex> lk (d->mut);
   d->userOffhookHandler = handler;
 }
 
@@ -206,6 +287,7 @@ bool Daa::isOffhook() const {
 void Daa::setRingingBeforeOffhook (int count) {
   PIMP_D (Daa);
 
+  std::lock_guard<std::shared_timed_mutex> lk (d->mut);
   d->ringingBeforeOffhook = count;
 }
 
@@ -220,6 +302,7 @@ int Daa::ringingBeforeOffhook() const {
 int Daa::ringingSinceHangup() const {
   PIMP_D (const Daa);
 
+  std::shared_lock<std::shared_timed_mutex> lk (d->mut);
   return d->ringingSinceHangup;
 }
 
@@ -227,6 +310,7 @@ int Daa::ringingSinceHangup() const {
 void Daa::setHookFlash (bool value) {
   PIMP_D (Daa);
 
+  std::lock_guard<std::shared_timed_mutex> lk (d->mut);
   d->hookFlash = value;
 }
 
