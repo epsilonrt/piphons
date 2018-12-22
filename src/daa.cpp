@@ -68,18 +68,6 @@ namespace Piphons {
   Daa::Private::~Private() = default;
 
   // ---------------------------------------------------------------------------
-  void Daa::Private::offhook (bool value) {
-
-    offhookPin.write (value == offhookEnabledLevel);
-  }
-
-  // ---------------------------------------------------------------------------
-  bool Daa::Private::isOffhook () const {
-
-    return offhookPin.read () == offhookEnabledLevel;
-  }
-
-  // ---------------------------------------------------------------------------
   bool Daa::Private::open() {
 
     if (gpio.open()) {
@@ -173,6 +161,18 @@ namespace Piphons {
   }
 
   // ---------------------------------------------------------------------------
+  void Daa::Private::offhook (bool value) {
+
+    offhookPin.write (value == offhookEnabledLevel);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Daa::Private::isOffhook () const {
+
+    return offhookPin.read () == offhookEnabledLevel;
+  }
+
+  // ---------------------------------------------------------------------------
   //
   //                             Daa Class
   //
@@ -228,6 +228,13 @@ namespace Piphons {
       offhook (false);
       d->close();
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Daa::isOpen() const {
+    PIMP_D (const Daa);
+
+    return d->isOpen;
   }
 
   // ---------------------------------------------------------------------------
@@ -307,13 +314,6 @@ namespace Piphons {
     PIMP_D (const Daa);
 
     return d->ringingSinceHangup;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool Daa::isOpen() const {
-    PIMP_D (const Daa);
-
-    return d->isOpen;
   }
 
 }

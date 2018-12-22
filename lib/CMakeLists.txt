@@ -28,6 +28,7 @@ file(GLOB src_piphons  ${PIPHONS_SRC_DIR}/*.cpp)
 set (hdr_piphons 
   ${PIPHONS_INC_DIR}/piphons/global.h
   ${PIPHONS_INC_DIR}/piphons/daa.h
+  ${PIPHONS_INC_DIR}/piphons/dtmf.h
 )
 
 set (hdr_toueris 

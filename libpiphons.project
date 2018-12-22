@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiphons" Version="10.0.0" InternalType="Console">
+  <VirtualDirectory Name="examples">
+    <VirtualDirectory Name="daa-demo">
+      <File Name="examples/daa-demo/main.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="dtmf-demo">
+      <File Name="examples/dtmf-demo/main.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="toueris">
       <File Name="src/toueris/daa.cpp"/>
     </VirtualDirectory>
     <File Name="src/daa_p.h"/>
     <File Name="src/daa.cpp"/>
+    <File Name="src/dtmf.cpp"/>
+    <File Name="src/dtmf_p.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piphons">
@@ -14,6 +24,7 @@
       </VirtualDirectory>
       <File Name="include/piphons/daa.h"/>
       <File Name="include/piphons/global.h"/>
+      <File Name="include/piphons/dtmf.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="dev">

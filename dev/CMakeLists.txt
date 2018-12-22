@@ -34,9 +34,11 @@ install (DIRECTORY codelite/executable-piphons
 
 # Examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/
-        DESTINATION $PIPHONS_INSTALL_EXAMPLES_DIR}
+        DESTINATION ${PIPHONS_INSTALL_EXAMPLES_DIR}
         COMPONENT dev
         FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt"
+        PATTERN "Debug/" EXCLUDE
+        PATTERN "Release/" EXCLUDE
         PATTERN ".clang/" EXCLUDE
         PATTERN ".codelite/" EXCLUDE
         PATTERN "cmake-build*/" EXCLUDE)

@@ -15,57 +15,46 @@
  * along with the libpiphons Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PIPHONS_DAA_H
-#define PIPHONS_DAA_H
+#ifndef PIPHONS_DTMF_H
+#define PIPHONS_DTMF_H
 
+#include <array>
 #include <piphons/global.h>
 
 namespace Piphons {
 
   /**
-   * @class Daa
-   * @brief A telephone line interface, also called a DAA or Data Access Arrangement
+   * @class Dtmf
+   * @brief DTMF Ic compatible with the MT8870 (HT9170 ...)
    */
-  class Daa {
+  class Dtmf {
     public:
-      typedef void (*DaaHandler) (Daa * line);
+      typedef void (*DtmfHandler) (Dtmf * ctrl);
 
-      Daa (int ringPin, int offhookPin, bool ringEnabledLevel = false, bool offhookEnabledLevel = false);
-      Daa (const Daa & other);
-      void swap (Daa &other);
-      Daa& operator= (const Daa &other);
-      ~Daa();
+      Dtmf (int d0Pin, int d1Pin, int d2Pin, int d3Pin, int dvPin);
+      Dtmf (const std::array<int,5> & dPin);
+      Dtmf (const Dtmf & other);
+      void swap (Dtmf &other);
+      Dtmf& operator= (const Dtmf &other);
+      ~Dtmf();
 
-      void setRingingHandler (DaaHandler handler);
-      void setOffhookHandler (DaaHandler handler);
+      void setKeyHandler (DtmfHandler handler);
+      std::size_t available() const;
+      int read();
 
       bool open();
       bool isOpen() const;
       void close();
 
-      void offhook (bool oh = true);
-      bool isOffhook() const;
-      inline void hangup() {
-        offhook (false);
-      }
-
-      void setRingingBeforeOffhook (int count);
-      int ringingBeforeOffhook() const;
-
-      void setHookFlash (bool value);
-      bool hookFlash() const;
-
-      int ringingSinceHangup() const;
-
     protected:
       class Private;
-      Daa (Private &dd);
+      Dtmf (Private &dd);
       std::unique_ptr<Private> d_ptr;
 
     private:
-      PIMP_DECLARE_PRIVATE (Daa)
+      PIMP_DECLARE_PRIVATE (Dtmf)
   };
 
 }
 /* ========================================================================== */
-#endif /* PIPHONS_DAA_H defined */
+#endif /* PIPHONS_DTMF_H defined */
