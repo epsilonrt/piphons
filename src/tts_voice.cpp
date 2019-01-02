@@ -390,5 +390,13 @@ namespace Piphons {
 
     return voice (std::string (iso));
   }
+
+  // ---------------------------------------------------------------------------
+  // static
+  const std::map<std::string, Tts::Voice> & Tts::Voice::voices() {
+    
+    Private::staticInit();
+    return Private::voices;
+  }
 }
 /* ========================================================================== */

@@ -19,7 +19,7 @@
 #define PIPHONS_TTS_H
 
 #include <string>
-#include <vector>
+#include <map>
 #include <piphons/global.h>
 
 namespace Piphons {
@@ -92,6 +92,7 @@ namespace Piphons {
 
           static const Voice * voice (const std::string & iso);
           static const Voice * voice (const char * iso);
+          static const std::map<std::string, Voice> & voices();
 
         protected:
           class Private;

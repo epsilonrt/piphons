@@ -17,7 +17,6 @@
 #ifndef PIPHONS_TTS_VOICE_PRIVATE_H
 #define PIPHONS_TTS_VOICE_PRIVATE_H
 
-#include <map>
 #include <piphons/tts.h>
 
 namespace Piphons {
