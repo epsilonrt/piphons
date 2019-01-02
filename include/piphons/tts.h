@@ -38,7 +38,11 @@ namespace Piphons {
       bool isOpen() const;
       void close();
 
+      bool write (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
+      bool append (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
+      bool say ();
       bool say (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
+
       const Voice & voice() const;
       const std::string & errorString() const;
       const std::string & device() const;
@@ -142,9 +146,11 @@ namespace Piphons {
           const std::string & device() const;
 
           bool write (const std::string & text, int volume, int speed, int pitch);
+          bool append (const std::string & text, int volume, int speed, int pitch);
           bool play();
 
           const Voice & voice() const;
+          static std::string formatText (const std::string & text, int volume, int speed, int pitch);
 
         protected:
           class Private;

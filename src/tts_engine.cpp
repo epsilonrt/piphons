@@ -16,6 +16,7 @@
  */
 #include <cstring>
 #include <exception>
+#include <sstream>
 #include <piduino/system.h>
 #include "tts_engine_p.h"
 
@@ -304,6 +305,58 @@ unloadTaResource:
   }
 
   // ---------------------------------------------------------------------------
+  std::string Tts::Engine::Private::formatText (const std::string & text,
+      int volume, int speed, int pitch) {
+    std::ostringstream out;
+    bool setVolume  = ( (volume != 100)  && (volume >= 0));
+    bool setSpeed   = ( (speed != 100)  && (speed  >= 0));
+    bool setPitch   = ( (pitch != 100)  && (pitch  >= 0));
+
+    // <volume level="..."> ... </volume>, between 0 and 500
+    if (setVolume) {
+      if (volume > 500) {
+        volume = 500;
+      }
+      out << "<volume level=\"" << volume << "\">";
+    }
+    // <speed level="..."> ... </speed>  between 20 and 500
+    if (setSpeed) {
+      if (speed < 20) {
+        speed = 20;
+      }
+      else if (speed > 500) {
+        speed = 500;
+      }
+      out << "<speed level=\"" << speed << "\">";
+    }
+    // <pitch level="..."> ... </pitch>, between 50 and 200
+    if (setPitch) {
+      if (pitch < 50) {
+        pitch = 50;
+      }
+      else if (pitch > 200) {
+        pitch = 200;
+      }
+      out << "<pitch level=\"" << pitch << "\">";
+    }
+    out << text;
+    // <pitch level="..."> ... </pitch>, between 50 and 200
+    if (setPitch) {
+      out << "</pitch>";
+    }
+    // <speed level="..."> ... </speed>, between 20 and 500
+    if (setSpeed) {
+      out << "</speed>";
+    }
+    // <volume level="..."> ... </volume>, between 0 and 500
+    if (setVolume) {
+      out << "</volume>";
+    }
+    out.flush();
+    return out.str();
+  }
+
+  // ---------------------------------------------------------------------------
   //
   //                        Tts::Engine Class
   //
@@ -355,7 +408,15 @@ unloadTaResource:
   bool Tts::Engine::write (const std::string & text, int volume, int speed, int pitch) {
     PIMP_D (Tts::Engine);
 
-    d->text2speech = text;
+    d->text2speech = d->formatText (text, volume, speed, pitch);
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Tts::Engine::append (const std::string & text, int volume, int speed, int pitch) {
+    PIMP_D (Tts::Engine);
+
+    d->text2speech += d->formatText (text, volume, speed, pitch);
     return true;
   }
 
@@ -393,5 +454,12 @@ unloadTaResource:
 
     return *d->voice;
   }
+
+  // ---------------------------------------------------------------------------
+  std::string Tts::Engine::formatText (const std::string & text, int volume, int speed, int pitch) {
+
+    return Private::formatText (text, volume, speed, pitch);
+  }
+
 }
 /* ========================================================================== */

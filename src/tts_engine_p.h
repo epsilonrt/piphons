@@ -17,7 +17,6 @@
 #ifndef PIPHONS_TTS_ENGINE_PRIVATE_H
 #define PIPHONS_TTS_ENGINE_PRIVATE_H
 
-#include <shared_mutex>
 #include <picoapi.h>
 #include <picoapid.h>
 #include <picoos.h>
@@ -32,6 +31,7 @@ namespace Piphons {
       bool open();
       void close();
       int process();
+      static std::string formatText (const std::string & text, int volume, int speed, int pitch);
 
       static const int MemorySize = 2500000;
       static const int BufferSize = 256;
@@ -51,8 +51,6 @@ namespace Piphons {
       std::string text2speech;
       std::string error;
       Player player;
-      // must remain the last ...
-      mutable std::shared_timed_mutex mut;
 
       PIMP_DECLARE_PUBLIC (Engine)
   };

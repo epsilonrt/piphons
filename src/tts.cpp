@@ -79,11 +79,32 @@ namespace Piphons {
   }
 
   // ---------------------------------------------------------------------------
-  bool Tts::say (const std::string & text, int volume, int speed, int pitch) {
+  bool Tts::write (const std::string & text, int volume, int speed, int pitch) {
     PIMP_D (Tts);
 
-    if (d->engine.write (text, volume, speed, pitch)) {
-      return d->engine.play();
+    return d->engine.write (text, volume, speed, pitch);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Tts::append (const std::string & text, int volume, int speed, int pitch) {
+    PIMP_D (Tts);
+
+    return d->engine.append (text, volume, speed, pitch);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Tts::say () {
+    PIMP_D (Tts);
+
+    return d->engine.play();
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Tts::say (const std::string & text, int volume, int speed, int pitch) {
+
+    if (write (text, volume, speed, pitch)) {
+      
+      return say();
     }
     return false;
   }
