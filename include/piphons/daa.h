@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2019 Pascal JEAN, All rights reserved.
  * This file is part of the libpiphons Library.
  *
  * The libpiphons Library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ namespace Piphons {
 
       Daa (int ringPin, int offhookPin, bool ringEnabledLevel = false, bool offhookEnabledLevel = false);
       Daa (const Daa & other);
-      void swap (Daa &other);
+      void swap (Daa & other);
       Daa& operator= (const Daa &other);
       ~Daa();
 

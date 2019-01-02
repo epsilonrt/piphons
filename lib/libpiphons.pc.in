@@ -1,8 +1,8 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 bindir=@INSTALL_BIN_DIR@
-libdir=@INSTALL_LIB_DIR@
-includedir=@INSTALL_INCLUDE_DIR@
+piphons_libdir=@INSTALL_LIB_DIR@
+piphons_includedir=@INSTALL_INCLUDE_DIR@
 ldflags_other=@PIPHONS_LDFLAGS_PKGCONFIG@
 cflags_other=@PIPHONS_CFLAGS_PKGCONFIG@
 
@@ -11,6 +11,6 @@ Description: @PROJECT_DESCRIPTION@
 URL: https://github.com/epsilonrt/piphons
 Version: @PIPHONS_VERSION@
 Requires: 
-Libs: -L${libdir} -lpiphons ${ldflags_other}
-Cflags: -I${includedir} ${cflags_other}
+Libs: -L${piphons_libdir} -lpiphons ${ldflags_other}
+Cflags: -I${piphons_includedir} ${cflags_other}
 

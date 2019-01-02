@@ -6,10 +6,10 @@ Note that this project is set to work with the GNU toolchain (gdb, g++) and libp
 	</Description>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="-std=c++14;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libpiphons)" C_Options="-std=c99;$(shell pkg-config --cflags piduino);$(shell pkg-config --cflags libpiphons)" Assembler="">
+      <Compiler Options="-std=c++14;$(shell pkg-config --cflags libpiphons)" C_Options="-std=c99;$(shell pkg-config --cflags libpiphons)" Assembler="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="$(shell pkg-config --libs piduino);$(shell pkg-config --libs libpiphons)">
+      <Linker Options="$(shell pkg-config --libs libpiphons)">
         <LibraryPath Value="."/>
       </Linker>
       <ResourceCompiler Options=""/>

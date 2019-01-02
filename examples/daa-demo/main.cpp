@@ -1,7 +1,7 @@
 // libpiphons DAA example
 // This example code is in the public domain.
 #include <iostream>
-#include <piphons/daa.h>
+#include <piphons.h>
 #include <Arduino.h> // Piduino Arduino API
 
 using namespace std;

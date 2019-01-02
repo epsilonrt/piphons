@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2019 Pascal JEAN, All rights reserved.
  * This file is part of the libpiphons Library.
  *
  * The libpiphons Library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@
 #ifndef PIPHONS_CONFIG_H_
 #define PIPHONS_CONFIG_H_
 /* ========================================================================== */
+#cmakedefine01 PIPHONS_WITH_TOUERIS
 
 #define PIPHONS_VERSION       "@PIPHONS_VERSION_STRING@"
 #define PIPHONS_VERSION_SHORT "@PIPHONS_VERSION_SHORT@"

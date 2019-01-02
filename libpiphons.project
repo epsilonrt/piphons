@@ -7,6 +7,9 @@
     <VirtualDirectory Name="dtmf-demo">
       <File Name="examples/dtmf-demo/main.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="tts-demo">
+      <File Name="examples/tts-demo/main.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="toueris">
@@ -16,6 +19,14 @@
     <File Name="src/daa.cpp"/>
     <File Name="src/dtmf.cpp"/>
     <File Name="src/dtmf_p.h"/>
+    <File Name="src/tts_p.h"/>
+    <File Name="src/tts_voice.cpp"/>
+    <File Name="src/tts_player.cpp"/>
+    <File Name="src/tts_engine.cpp"/>
+    <File Name="src/tts.cpp"/>
+    <File Name="src/tts_engine_p.h"/>
+    <File Name="src/tts_player_p.h"/>
+    <File Name="src/tts_voice_p.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piphons">
@@ -25,7 +36,9 @@
       <File Name="include/piphons/daa.h"/>
       <File Name="include/piphons/global.h"/>
       <File Name="include/piphons/dtmf.h"/>
+      <File Name="include/piphons/tts.h"/>
     </VirtualDirectory>
+    <File Name="include/piphons.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="dev">
     <VirtualDirectory Name="codelite">
@@ -35,11 +48,13 @@
     </VirtualDirectory>
     <VirtualDirectory Name="bin">
       <File Name="dev/bin/git-version"/>
+      <File Name="dev/bin/cp-pico-header.sh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="cmake">
       <File Name="dev/cmake/GitVersion.cmake"/>
       <File Name="dev/cmake/FindGzip.cmake"/>
       <File Name="dev/cmake/GetDate.cmake"/>
+      <File Name="dev/cmake/PicoConfig.cmake"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="dev/CMakeLists.txt"/>

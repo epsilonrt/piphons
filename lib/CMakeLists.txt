@@ -29,6 +29,7 @@ set (hdr_piphons
   ${PIPHONS_INC_DIR}/piphons/global.h
   ${PIPHONS_INC_DIR}/piphons/daa.h
   ${PIPHONS_INC_DIR}/piphons/dtmf.h
+  ${PIPHONS_INC_DIR}/piphons/tts.h
 )
 
 set (hdr_toueris 
@@ -53,7 +54,12 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-add_library(piphons-shared SHARED ${libsrc})
+add_custom_command(OUTPUT picoapi.h
+                   COMMAND "${PROJECT_SOURCE_DIR}/dev/bin/cp-pico-header.sh" 
+                   ${PICO_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}
+                   COMMENT "Copy libttspico header files")
+
+add_library(piphons-shared SHARED ${libsrc} picoapi.h)
 target_compile_definitions(piphons-shared PUBLIC PIPHONS_WITH_CONFIG_H)
 set_target_properties(piphons-shared PROPERTIES 
   OUTPUT_NAME piphons 
@@ -62,6 +68,7 @@ set_target_properties(piphons-shared PROPERTIES
   SOVERSION ${PIPHONS_VERSION_SHORT}
   PUBLIC_HEADER "${hdr_public}"
   )
+
 
 if(PIPHONS_WITH_STATIC)
   add_library(piphons-static STATIC ${libsrc})
@@ -113,6 +120,7 @@ configure_file(libpiphons-config.cmake.in
 configure_file(libpiphons-config-version.cmake.in
   "${PROJECT_BINARY_DIR}/libpiphons-config-version.cmake" @ONLY)
 
+
 # Install the libpiphons-config.cmake and libpiphons-config-version.cmake
 install(FILES
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/libpiphons-config.cmake"
@@ -131,6 +139,10 @@ install(FILES
 install(FILES
   "${PROJECT_SOURCE_DIR}/README.md"
   DESTINATION "${PIPHONS_INSTALL_DOC_DIR}" COMPONENT lib)
+
+install(FILES
+  "${PIPHONS_INC_DIR}/piphons.h"
+  DESTINATION "${INSTALL_INCLUDE_DIR}" COMPONENT dev)
 
 install (TARGETS piphons-shared
   # IMPORTANT: Add the piphons library to the "export-set"

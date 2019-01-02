@@ -1,4 +1,4 @@
-# Copyright © 2018 Pascal JEAN, All rights reserved.
+# Copyright © 2018-2019 Pascal JEAN, All rights reserved.
 # This file is part of the libpiphons Project.
 #
 # The libpiphons Project is free software: you can redistribute it and/or modify
@@ -31,7 +31,8 @@ set (PROJECT_DESCRIPTION_TEXT "\
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME)
 
 # Appends the cmake/modules path to MAKE_MODULE_PATH variable.
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/dev/cmake" "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dev/cmake ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_MODULE_PATH})
+#message(STATUS "CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
@@ -67,14 +68,26 @@ set(INSTALL_DATA_DIR ${DEF_INSTALL_DATA_DIR} CACHE PATH
 
 set (CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED)
-find_package(Piduino REQUIRED)
 find_package(Gzip)
+find_package(Pico REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/dev/cmake)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules (PIDUINO REQUIRED piduino)
+pkg_check_modules (ALSA REQUIRED alsa)
 
-set (PIPHONS_CFLAGS_OTHER ${PIDUINO_CFLAGS} ${CMAKE_THREAD_LIBS_INIT})
-set (PIPHONS_LDFLAGS_OTHER  ${PIDUINO_LDFLAGS} -lpthread)
+# message(STATUS "ALSA_LDFLAGS=${ALSA_LDFLAGS}")
+# message(STATUS "ALSA_CFLAGS=${ALSA_CFLAGS}")
+# message(STATUS "PIDUINO_LDFLAGS=${PIDUINO_LDFLAGS}")
+# message(STATUS "PIDUINO_CFLAGS=${PIDUINO_CFLAGS}")
+# message(STATUS "PICO_LDFLAGS=${PICO_LDFLAGS}")
+# message(STATUS "PICO_CFLAGS=${PICO_CFLAGS}")
+
+set (PIPHONS_CFLAGS_OTHER ${PIDUINO_CFLAGS} ${ALSA_CFLAGS} ${PICO_CFLAGS})
+list(REMOVE_DUPLICATES PIPHONS_CFLAGS_OTHER)
+
+set (PIPHONS_LDFLAGS_OTHER  ${PIDUINO_LDFLAGS} ${ALSA_LDFLAGS} ${PICO_LDFLAGS})
+list(REMOVE_DUPLICATES PIPHONS_LDFLAGS_OTHER)
+# message(STATUS "PIPHONS_CFLAGS_OTHER=${PIPHONS_CFLAGS_OTHER}")
+# message(STATUS "PIPHONS_LDFLAGS_OTHER=${PIPHONS_LDFLAGS_OTHER}")
 
 include (GetDate)
 GetDate(DATE_)
@@ -174,13 +187,13 @@ if (CPACK_GENERATOR STREQUAL "DEB")
   set(CPACK_DEBIAN_LIB_PACKAGE_NAME "libpiphons")
   set(CPACK_COMPONENT_LIB_DESCRIPTION "${CPACK_DEBIAN_LIB_PACKAGE_NAME} - ${PROJECT_DESCRIPTION} (library)\n${PROJECT_DESCRIPTION_TEXT}\n  This package provides the shared libriairie itself.")
   set(CPACK_DEBIAN_LIB_FILE_NAME "lib${PROJECT_NAME}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
-  set(CPACK_DEBIAN_LIB_PACKAGE_DEPENDS "libstdc++6,libpiduino")
+  set(CPACK_DEBIAN_LIB_PACKAGE_DEPENDS "libstdc++6,libpiduino (>= 0.3-45),libttspico0 (>= 1.0),libasound2 (>= 1.1.3-5)")
   set(CPACK_DEBIAN_LIB_PACKAGE_SECTION "libs")
 
   set(CPACK_DEBIAN_DEV_PACKAGE_NAME "libpiphons-dev")
   set(CPACK_COMPONENT_DEV_DESCRIPTION "${CPACK_DEBIAN_LIB_PACKAGE_NAME} - ${PROJECT_DESCRIPTION} (development files)\n${PROJECT_DESCRIPTION_TEXT}\n  This package provides the development files.")
   set(CPACK_DEBIAN_DEV_FILE_NAME "lib${PROJECT_NAME}-dev_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
-  set(CPACK_DEBIAN_DEV_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION}),pkg-config,git-core,libpiduino-dev")
+  set(CPACK_DEBIAN_DEV_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION}),pkg-config,git-core,libpiduino-dev (>= 0.3-45),libttspico0-dev (>= 1.0),libasound2-dev (>= 1.1.3-5)")
   set(CPACK_DEBIAN_DEV_PACKAGE_SECTION "libdevel")
   #set(CPACK_PACKAGE_DESCRIPTION_FILE "${PIPHONS_SRC_DIR}/doc/README-deb.md")
 

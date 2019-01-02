@@ -14,45 +14,48 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the libpiphons Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PIPHONS_DTMF_PRIVATE_H
-#define PIPHONS_DTMF_PRIVATE_H
+#ifndef PIPHONS_TTS_ENGINE_PRIVATE_H
+#define PIPHONS_TTS_ENGINE_PRIVATE_H
 
 #include <shared_mutex>
-#include <queue>
-#include <string>
-#include <piduino/gpio.h>
-#include <piduino/gpiopin.h>
-#include <piphons/dtmf.h>
-
-using namespace Piduino;
+#include <picoapi.h>
+#include <picoapid.h>
+#include <picoos.h>
+#include <piphons/tts.h>
 
 namespace Piphons {
 
-  class Dtmf::Private {
+  class Tts::Engine::Private {
     public:
-      Private (Dtmf * q, int d0Pin, int d1Pin, int d2Pin, int d3Pin, int dvPin);
-      Private (Dtmf * q, const std::array<int,5> & dPin);
-      Private (const Private & other);
-      virtual ~Private();
+      Private (Engine * q);
+      ~Private();
+      bool open();
+      void close();
+      int process();
 
-      Dtmf * const q_ptr;
-      std::array<Pin *, 4> dPin;
-      Pin & dvPin;
-      DtmfHandler userKeyHandler;
-      bool isOpen;
-      std::queue<char> fifo;
+      static const int MemorySize = 2500000;
+      static const int BufferSize = 256;
+      static const pico_Char voiceName[];
+
+      Engine * const q_ptr;
+      const Voice * voice;
+
+      pico_System system;
+      pico_Engine engine;
+      void * memory;
+      pico_Resource taResource;
+      pico_Resource sgResource;
+      pico_Char * taResourceName;
+      pico_Char * sgResourceName;
+      
+      std::string text2speech;
+      std::string error;
+      Player player;
       // must remain the last ...
       mutable std::shared_timed_mutex mut;
 
-      virtual bool open ();
-      virtual void close ();
-
-      static void keyIsr (void * dtmf);
-      static const std::string keys;
-
-      PIMP_DECLARE_PUBLIC (Dtmf)
+      PIMP_DECLARE_PUBLIC (Engine)
   };
-
 }
 /* ========================================================================== */
-#endif /* PIPHONS_DTMF_PRIVATE_H defined */
+#endif /* PIPHONS_TTS_ENGINE_PRIVATE_H defined */

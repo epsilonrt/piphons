@@ -14,45 +14,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the libpiphons Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PIPHONS_DTMF_PRIVATE_H
-#define PIPHONS_DTMF_PRIVATE_H
+#ifndef PIPHONS_TTS_PLAYER_PRIVATE_H
+#define PIPHONS_TTS_PLAYER_PRIVATE_H
 
-#include <shared_mutex>
-#include <queue>
-#include <string>
-#include <piduino/gpio.h>
-#include <piduino/gpiopin.h>
-#include <piphons/dtmf.h>
-
-using namespace Piduino;
+#include <alsa/asoundlib.h>
+#include <piphons/tts.h>
 
 namespace Piphons {
 
-  class Dtmf::Private {
+  class Tts::Player::Private {
     public:
-      Private (Dtmf * q, int d0Pin, int d1Pin, int d2Pin, int d3Pin, int dvPin);
-      Private (Dtmf * q, const std::array<int,5> & dPin);
-      Private (const Private & other);
-      virtual ~Private();
+      Private (Player * q);
+      ~Private();
 
-      Dtmf * const q_ptr;
-      std::array<Pin *, 4> dPin;
-      Pin & dvPin;
-      DtmfHandler userKeyHandler;
-      bool isOpen;
-      std::queue<char> fifo;
-      // must remain the last ...
-      mutable std::shared_timed_mutex mut;
+      Player * const q_ptr;
+      snd_pcm_t * handle;
+      int mode; // 0 = blocking; SND_PCM_NONBLOCK = not blocking
+      std::string device;
+      std::string error;
 
-      virtual bool open ();
-      virtual void close ();
-
-      static void keyIsr (void * dtmf);
-      static const std::string keys;
-
-      PIMP_DECLARE_PUBLIC (Dtmf)
+      PIMP_DECLARE_PUBLIC (Player)
   };
-
 }
 /* ========================================================================== */
-#endif /* PIPHONS_DTMF_PRIVATE_H defined */
+#endif /* PIPHONS_TTS_PLAYER_PRIVATE_H defined */

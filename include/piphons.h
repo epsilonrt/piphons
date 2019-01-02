@@ -15,46 +15,16 @@
  * along with the libpiphons Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PIPHONS_DTMF_H
-#define PIPHONS_DTMF_H
+#ifndef PIPHONS_H_
+#define PIPHONS_H_
 
-#include <array>
-#include <piphons/global.h>
+#include <piphons/config.h>
+#include <piphons/daa.h>
+#include <piphons/dtmf.h>
+#include <piphons/tts.h>
+#if PIPHONS_WITH_TOUERIS
+#include <piphons/toueris/daa.h>
+#endif
 
-namespace Piphons {
-
-  /**
-   * @class Dtmf
-   * @brief DTMF Ic compatible with the MT8870 (HT9170 ...)
-   */
-  class Dtmf {
-    public:
-      typedef void (*DtmfHandler) (Dtmf * ctrl);
-
-      Dtmf (int d0Pin, int d1Pin, int d2Pin, int d3Pin, int dvPin);
-      Dtmf (const std::array<int,5> & dPin);
-      Dtmf (const Dtmf & other);
-      void swap (Dtmf &other);
-      Dtmf& operator= (const Dtmf &other);
-      ~Dtmf();
-
-      void setKeyHandler (DtmfHandler handler);
-      std::size_t available() const;
-      int read();
-
-      bool open();
-      bool isOpen() const;
-      void close();
-
-    protected:
-      class Private;
-      Dtmf (Private &dd);
-      std::unique_ptr<Private> d_ptr;
-
-    private:
-      PIMP_DECLARE_PRIVATE (Dtmf)
-  };
-
-}
 /* ========================================================================== */
-#endif /* PIPHONS_DTMF_H defined */
+#endif /* PIPHONS_H_ defined */

@@ -2,7 +2,7 @@
 <CodeLite_Workspace Name="piphons" Database="" Version="10.0.0">
   <Project Name="libpiphons" Path="libpiphons.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="libpiphons" ConfigName="Debug"/>
     </WorkspaceConfiguration>

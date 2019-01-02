@@ -1,6 +1,7 @@
-// libpiphons DTMF example
+// libpiphons DTMF/TTS example
 // This example code is in the public domain.
 #include <iostream>
+#include <string>
 #include <atomic>
 #include <piphons.h>
 #include <Arduino.h> // Piduino Arduino API
@@ -15,6 +16,7 @@ const int offhookResetPin = 21;
 const std::array<int, 5> dtmfPin = {7, 0, 2, 3, 31}; // D0,D1,D2,D3,DV
 
 std::atomic<bool> loop (true);
+Tts tts;
 
 // -----------------------------------------------------------------------------
 void ringIsr (Daa * daa) {
@@ -29,15 +31,29 @@ void offhookIsr (Daa * daa) {
        << "Off-hook !" << endl
        << "Waiting for DTMF key... " << endl
        << "Send ## to hang up" << endl;
+  tts.say ("Bonjour, veuillez saisir le code secret.");
 }
 
 // -----------------------------------------------------------------------------
 void keyIsr (Dtmf * dtmf) {
   static char prev;
   char c;
+  string text;
 
   c = dtmf->read();
   cout << c << flush;
+  switch (c) {
+    case '*':
+      text = "étoile.";
+      break;
+    case '#':
+      text = "dièze.";
+      break;
+    default:
+      text = c;
+  }
+  tts.say (text);
+
   if ( (c == '#') && (prev == '#')) {
     loop = false;
   }
@@ -46,6 +62,7 @@ void keyIsr (Dtmf * dtmf) {
 
 // -----------------------------------------------------------------------------
 int main (int argc, char **argv) {
+  // Toueris::Daa daa (ringPin, offhookPin, offhookSetPin, offhookResetPin);
   Daa daa (ringPin, offhookPin, false, true);
   Dtmf dtmf (dtmfPin);
 
@@ -55,8 +72,9 @@ int main (int argc, char **argv) {
   daa.setHookFlash (true);
   daa.open();
   dtmf.open();
+  tts.open ("fr-FR");
 
-  cout << "Piphons DTMF Example" << endl
+  cout << "Piphons DTMF/TTS Example" << endl
        << "Waiting for a call..." << endl
        << "Press CTRL+C to quit !" << endl;
   while (loop.load()) {
@@ -64,8 +82,9 @@ int main (int argc, char **argv) {
     delay (100);
   }
 
-  daa.close();
+  tts.close();
   dtmf.close();
+  daa.close();
   cout << endl
        << "I hung up the phone." << endl
        << "Have a nice day !" << endl;

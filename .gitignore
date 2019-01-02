@@ -12,3 +12,4 @@ obj/
 version.*
 *build-*/
 work/
+3rdparty/
