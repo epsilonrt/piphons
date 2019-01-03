@@ -30,7 +30,8 @@ namespace Piphons {
     public:
       typedef void (*DaaHandler) (Daa * line);
 
-      Daa (int ringPin, int offhookPin, bool ringEnabledLevel = false, bool offhookEnabledLevel = false);
+      Daa (int ringPin, int offhookPin, int tonePin = -1);
+      Daa (int ringPin, int offhookPin, bool ringEnabledLevel, bool offhookEnabledLevel);
       Daa (const Daa & other);
       void swap (Daa & other);
       Daa& operator= (const Daa &other);

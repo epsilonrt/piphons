@@ -36,6 +36,37 @@ namespace Piphons {
   Tts::Private::~Private() = default;
 
   // ---------------------------------------------------------------------------
+  void * Tts::Private::parser (const std::string & voiceIso, const std::string & device,
+                               std::future<void> run, Private * d) {
+    std::string text;
+    bool success = true;
+
+    if (d->engine.open (voiceIso, device)) {
+
+      while (d->engine.isOpen() && success) {
+
+        if (! d->fifo.read (text, 500)) {
+          // nothing to say 
+          
+          if (run.wait_for (std::chrono::milliseconds (1)) != std::future_status::timeout) {
+            
+            break;
+          }
+          text.clear(); // set mute text
+        }
+        
+        success = d->engine.write (text);
+        if (success) {
+          
+          success = d->engine.play();
+        }
+      }
+      d->engine.close();
+    }
+    return 0;
+  }
+
+  // ---------------------------------------------------------------------------
   //
   //                                Tts Class
   //
@@ -56,9 +87,13 @@ namespace Piphons {
     if (!isOpen()) {
       PIMP_D (Tts);
 
-      return d->engine.open (voiceIso, device);
+      // Fetch std::future object associated with promise
+      std::future<void> running = d->stopParsing.get_future();
+
+      // Starting Thread & move the future object in lambda function by reference
+      d->parseThread = std::thread (&Private::parser, voiceIso, device, std::move (running), d);
     }
-    return true;
+    return isOpen();
   }
 
   // ---------------------------------------------------------------------------
@@ -67,7 +102,10 @@ namespace Piphons {
     if (isOpen()) {
       PIMP_D (Tts);
 
-      d->engine.close();
+      // Set the value in promise
+      d->stopParsing.set_value();
+      // Wait for thread to join
+      d->parseThread.join();
     }
   }
 
@@ -75,38 +113,40 @@ namespace Piphons {
   bool Tts::isOpen() const {
     PIMP_D (const Tts);
 
-    return d->engine.isOpen();
+    return d->parseThread.joinable();
   }
 
   // ---------------------------------------------------------------------------
-  bool Tts::write (const std::string & text, int volume, int speed, int pitch) {
+  void Tts::write (const std::string & text, int volume, int speed, int pitch) {
     PIMP_D (Tts);
 
-    return d->engine.write (text, volume, speed, pitch);
+    d->text = Engine::formatText (text, volume, speed, pitch);
   }
 
   // ---------------------------------------------------------------------------
-  bool Tts::append (const std::string & text, int volume, int speed, int pitch) {
+  void Tts::append (const std::string & text, int volume, int speed, int pitch) {
     PIMP_D (Tts);
 
-    return d->engine.append (text, volume, speed, pitch);
+    d->text += Engine::formatText (text, volume, speed, pitch);
   }
 
   // ---------------------------------------------------------------------------
   bool Tts::say () {
     PIMP_D (Tts);
 
-    return d->engine.play();
+    if (isOpen()) {
+
+      d->fifo.write (d->text);
+      return true;
+    }
+    return false;
   }
 
   // ---------------------------------------------------------------------------
   bool Tts::say (const std::string & text, int volume, int speed, int pitch) {
 
-    if (write (text, volume, speed, pitch)) {
-      
-      return say();
-    }
-    return false;
+    write (text, volume, speed, pitch);
+    return say();
   }
 
   // ---------------------------------------------------------------------------
@@ -129,6 +169,5 @@ namespace Piphons {
 
     return d->engine.device();
   }
-
 }
 /* ========================================================================== */

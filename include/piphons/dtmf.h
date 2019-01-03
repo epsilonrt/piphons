@@ -24,12 +24,22 @@
 namespace Piphons {
 
   /**
-   * @class Dtmf
+   * @class Dtmf decoder
    * @brief DTMF Ic compatible with the MT8870 (HT9170 ...)
+   * 
+   * The decoder is connected to the board Pi by a DV pin which indicates that 
+   * a DTMF code has been detected and 4 data pins D0 to D3 corresponding to 
+   * the code of the key pressed.
+   * 
+   * http://www.holtek.com/documents/10179/116711/9170v111.pdf
    */
   class Dtmf {
-    public:
+  public:
+      /**
+       * @brief type of key management function
+       */
       typedef void (*DtmfHandler) (Dtmf * ctrl);
+
 
       Dtmf (int d0Pin, int d1Pin, int d2Pin, int d3Pin, int dvPin);
       Dtmf (const std::array<int,5> & dPin);

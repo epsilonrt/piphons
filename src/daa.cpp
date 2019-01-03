@@ -30,6 +30,7 @@ namespace Piphons {
     q_ptr (q),
     ringPin (gpio.pin (rp)),
     offhookPin (gpio.pin (ohp)) ,
+    tonePin (0),
     ringEnabledLevel (rel),
     offhookEnabledLevel (ohel),
     ringingBeforeOffhook (8),
@@ -41,10 +42,20 @@ namespace Piphons {
     isOpen (false) {}
 
   // ---------------------------------------------------------------------------
+  Daa::Private::Private (Daa * q, int rp, int ohp, int tp) :
+    Private (q, rp, ohp, false, false)  {
+      
+    if (tp >= 0) {
+      tonePin = &gpio.pin (tp);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   Daa::Private::Private (const Daa::Private & other) :
     q_ptr (other.q_ptr),
     ringPin (other.ringPin),
     offhookPin (other.offhookPin) ,
+    tonePin (other.tonePin) ,
     ringEnabledLevel (other.ringEnabledLevel),
     offhookEnabledLevel (other.offhookEnabledLevel) {
 
@@ -184,6 +195,10 @@ namespace Piphons {
   // ---------------------------------------------------------------------------
   Daa::Daa (int rp, int ohp, bool rel, bool ohel) :
     d_ptr (new Private (this, rp, ohp, rel, ohel)) {}
+
+  // ---------------------------------------------------------------------------
+  Daa::Daa (int rp, int ohp, int tp) :
+    d_ptr (new Private (this, rp, ohp, tp)) {}
 
   // ---------------------------------------------------------------------------
   Daa::Daa (const Daa & other) :

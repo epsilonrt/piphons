@@ -38,8 +38,8 @@ namespace Piphons {
       bool isOpen() const;
       void close();
 
-      bool write (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
-      bool append (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
+      void write (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
+      void append (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
       bool say ();
       bool say (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
 
@@ -115,14 +115,15 @@ namespace Piphons {
       class Player {
         public:
 
-          Player();
+          Player (const std::string & device = "default");
           ~Player();
-          bool open (const std::string & device);
-          bool write (const void * buffer, unsigned long size);
+          bool open ();
           bool isOpen() const;
           void close();
-          const std::string & errorString() const;
+          void setDevice (const std::string & dev);
           const std::string & device() const;
+          bool write (const void * buffer, unsigned long size);
+          const std::string & errorString() const;
 
         protected:
           class Private;
@@ -145,8 +146,8 @@ namespace Piphons {
           const std::string & errorString() const;
           const std::string & device() const;
 
-          bool write (const std::string & text, int volume, int speed, int pitch);
-          bool append (const std::string & text, int volume, int speed, int pitch);
+          bool write (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
+          bool append (const std::string & text, int volume = -1, int speed = -1, int pitch = -1);
           bool play();
 
           const Voice & voice() const;

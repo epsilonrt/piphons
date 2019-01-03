@@ -29,6 +29,7 @@ namespace Piphons {
 
   class Daa::Private {
     public:
+      Private (Daa * q, int ringPin, int offhookPin, int tonePin);
       Private (Daa * q, int ringPin, int offhookPin, bool ringEnabledLevel, bool offhookEnabledLevel);
       Private (const Private & other);
       virtual ~Private();
@@ -36,6 +37,7 @@ namespace Piphons {
       Daa * const q_ptr;
       Pin & ringPin;
       Pin & offhookPin;
+      Pin * tonePin;
       bool ringEnabledLevel;
       bool offhookEnabledLevel;
       int ringingBeforeOffhook;

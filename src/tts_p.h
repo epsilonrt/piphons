@@ -17,7 +17,10 @@
 #ifndef PIPHONS_TTS_PRIVATE_H
 #define PIPHONS_TTS_PRIVATE_H
 
-#include <queue>
+#include <shared_mutex>
+#include <future>
+#include <thread>
+#include <piduino/threadsafebuffer.h>
 #include <piphons/tts.h>
 
 namespace Piphons {
@@ -26,10 +29,18 @@ namespace Piphons {
     public:
       Private (Tts * q);
       ~Private();
+      static void * parser (const std::string & voiceIso,
+                            const std::string & device,
+                            std::future<void> run,
+                            Private * d);
 
       Tts * const q_ptr;
-      std::queue<std::string> fifo;
       Engine engine;
+
+      std::string text;
+      std::promise<void> stopParsing;
+      std::thread parseThread;
+      Piduino::ThreadSafeBuffer<std::string> fifo;
 
       PIMP_DECLARE_PUBLIC (Tts)
   };

@@ -232,7 +232,7 @@ unloadTaResource:
     uint16_t samples[BufferSize / 2];
     pico_Char * p;
     pico_Retstring str;
-    size_t bufferlen = 0;
+    long bufferlen = 0;
 
     p = (pico_Char *) &text2speech[0];
     text_remaining = text2speech.size() + 1;
@@ -250,7 +250,13 @@ unloadTaResource:
 
       text_remaining -= bytes_sent;
       p += bytes_sent;
-
+      
+      if (!player.open()) {
+        
+        error = player.errorString();
+        return -1;
+      }
+      
       do {
 
         // Retrieves the next samples
@@ -300,7 +306,7 @@ unloadTaResource:
         bufferlen = 0;
       }
     }
-
+    player.close();
     return bufferlen;
   }
 
@@ -384,10 +390,8 @@ unloadTaResource:
       if (Voice::exists (voiceIso)) {
 
         d->voice = Voice::voice (voiceIso);
-        if (d->player.open (dev)) {
-
-          return d->open();
-        }
+        d->player.setDevice (dev);
+        return d->open();
       }
     }
     return false;
@@ -445,7 +449,7 @@ unloadTaResource:
   bool Tts::Engine::isOpen() const {
     PIMP_D (const Tts::Engine);
 
-    return d->player.isOpen() && (d->engine != 0);
+    return d->engine != 0;
   }
 
   // ---------------------------------------------------------------------------

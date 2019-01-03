@@ -45,8 +45,11 @@ namespace Piphons {
   Tts::Player::Player (Tts::Player::Private &dd) : d_ptr (&dd) {}
 
   // ---------------------------------------------------------------------------
-  Tts::Player::Player () :
-    d_ptr (new Private (this)) {}
+  Tts::Player::Player (const std::string & dev) :
+    d_ptr (new Private (this)) {
+      
+    setDevice (dev);
+  }
 
   // ---------------------------------------------------------------------------
   Tts::Player::~Player() {
@@ -60,7 +63,14 @@ namespace Piphons {
 
     return d->error;
   }
-  
+
+  // ---------------------------------------------------------------------------
+  void Tts::Player::setDevice (const std::string & dev) {
+    PIMP_D (Tts::Player);
+
+    d->device = dev;
+  }
+
   // ---------------------------------------------------------------------------
   const std::string & Tts::Player::device() const {
     PIMP_D (const Tts::Player);
@@ -69,13 +79,13 @@ namespace Piphons {
   }
 
   // ---------------------------------------------------------------------------
-  bool Tts::Player::open (const std::string & dev) {
+  bool Tts::Player::open () {
 
     if (!isOpen()) {
       PIMP_D (Tts::Player);
       int err;
 
-      if ( (err = snd_pcm_open (&d->handle, dev.c_str(), SND_PCM_STREAM_PLAYBACK, d->mode)) < 0) {
+      if ( (err = snd_pcm_open (&d->handle, d->device.c_str(), SND_PCM_STREAM_PLAYBACK, d->mode)) < 0) {
 
         d->error = snd_strerror (err);
       }
@@ -86,13 +96,9 @@ namespace Piphons {
                                            1,
                                            16000,
                                            1,
-                                           200000)) < 0) {      /* 0.2 sec */
+                                           500000)) < 0) { // 0.5 sec
         d->error = snd_strerror (err);
         close();
-      }
-      else {
-
-        d->device = dev;
       }
     }
     return isOpen();
@@ -106,7 +112,6 @@ namespace Piphons {
 
       snd_pcm_close (d->handle);
       d->handle = 0;
-      d->device.clear();
     }
   }
 
@@ -120,7 +125,7 @@ namespace Piphons {
   // ---------------------------------------------------------------------------
   bool Tts::Player::write (const void * buffer, unsigned long size) {
     bool success = isOpen();
-    
+
     if (success) {
       PIMP_D (Tts::Player);
 
