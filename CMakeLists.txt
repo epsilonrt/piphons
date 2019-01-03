@@ -193,7 +193,7 @@ if (CPACK_GENERATOR STREQUAL "DEB")
   set(CPACK_DEBIAN_DEV_PACKAGE_NAME "libpiphons-dev")
   set(CPACK_COMPONENT_DEV_DESCRIPTION "${CPACK_DEBIAN_LIB_PACKAGE_NAME} - ${PROJECT_DESCRIPTION} (development files)\n${PROJECT_DESCRIPTION_TEXT}\n  This package provides the development files.")
   set(CPACK_DEBIAN_DEV_FILE_NAME "lib${PROJECT_NAME}-dev_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
-  set(CPACK_DEBIAN_DEV_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION}),pkg-config,git-core,libpiduino-dev (>= 0.3-45),libttspico0-dev (>= 1.0),libasound2-dev (>= 1.1.3-5)")
+  set(CPACK_DEBIAN_DEV_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION}),pkg-config,git-core,libpiduino-dev (>= 0.3-45),libttspico-dev (>= 1.0),libasound2-dev (>= 1.1.3-5)")
   set(CPACK_DEBIAN_DEV_PACKAGE_SECTION "libdevel")
   #set(CPACK_PACKAGE_DESCRIPTION_FILE "${PIPHONS_SRC_DIR}/doc/README-deb.md")
 
