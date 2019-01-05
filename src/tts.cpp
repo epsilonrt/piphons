@@ -16,6 +16,7 @@
  */
 #include <exception>
 #include <piduino/system.h>
+#include <piduino/clock.h>
 #include "tts_p.h"
 
 namespace Piphons {
@@ -39,30 +40,49 @@ namespace Piphons {
   void * Tts::Private::parser (const std::string & voiceIso, const std::string & device,
                                std::future<void> run, Private * d) {
     std::string text;
-    bool success = true;
+    bool success = d->engine.open (voiceIso, device);
 
-    if (d->engine.open (voiceIso, device)) {
+    while (d->engine.isOpen() && success) {
 
-      while (d->engine.isOpen() && success) {
+#if PIPHONS_SUN8I_CODEC_ANALOG_BUGFIX
+      // sun8i-codec-analog bug fixes
+      // this driver bug removes the first 700 milliseconds of sound.
+      static unsigned long tprev = 0;
+      unsigned long t;
 
-        if (! d->fifo.read (text, 500)) {
-          // nothing to say 
-          
-          if (run.wait_for (std::chrono::milliseconds (1)) != std::future_status::timeout) {
-            
-            break;
+      t = Piduino::clk.millis();
+
+      if ( (tprev == 0) || ( (t - tprev) > 2000)) {
+
+        tprev = t;
+        success = d->engine.write ("");
+        if (success) {
+
+          success = d->engine.play();
+          if (success) {
+            Piduino::clk.delay (700);
           }
-          text.clear(); // set mute text
         }
-        
+      }
+#endif // PIPHONS_SUN8I_CODEC_ANALOG_BUGFIX
+
+      if (success && d->fifo.read (text, 100)) {
+
         success = d->engine.write (text);
         if (success) {
-          
+
           success = d->engine.play();
         }
       }
-      d->engine.close();
+      else {
+
+        if (run.wait_for (std::chrono::milliseconds (100)) != std::future_status::timeout) {
+
+          break;
+        }
+      }
     }
+    d->engine.close();
     return 0;
   }
 

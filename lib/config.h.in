@@ -19,6 +19,7 @@
 #define PIPHONS_CONFIG_H_
 /* ========================================================================== */
 #cmakedefine01 PIPHONS_WITH_TOUERIS
+#cmakedefine01 PIPHONS_SUN8I_CODEC_ANALOG_BUGFIX
 
 #define PIPHONS_VERSION       "@PIPHONS_VERSION_STRING@"
 #define PIPHONS_VERSION_SHORT "@PIPHONS_VERSION_SHORT@"

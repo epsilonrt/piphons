@@ -47,6 +47,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 set (PIPHONS_WITH_TOUERIS 1 CACHE BOOL "Enable Toueris support")
+set (PIPHONS_SUN8I_CODEC_ANALOG_BUGFIX 1 CACHE BOOL "Fixes the sun8i-codec-analog driver bug")
+# fixes the driver bug that removes the first 700 milliseconds of sound.
 
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
@@ -126,6 +128,10 @@ add_custom_target(uninstall
 if (${PIPHONS_WITH_TOUERIS})
   add_definitions (-DPIPHONS_WITH_TOUERIS=1)
   message (STATUS "Build with Toueris support...")
+endif()
+if (${PIPHONS_SUN8I_CODEC_ANALOG_BUGFIX})
+  add_definitions (-DPIPHONS_SUN8I_CODEC_ANALOG_BUGFIX=1)
+  message (STATUS "Fixes the sun8i-codec-analog driver bug...")
 endif()
 
 add_definitions ( -DPIPHONS_INSTALL_DATA_DIR="${PIPHONS_INSTALL_DATA_DIR}" 
