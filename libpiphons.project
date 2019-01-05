@@ -3,12 +3,19 @@
   <VirtualDirectory Name="examples">
     <VirtualDirectory Name="daa-demo">
       <File Name="examples/daa-demo/main.cpp"/>
+      <File Name="examples/daa-demo/README.md"/>
     </VirtualDirectory>
     <VirtualDirectory Name="dtmf-demo">
       <File Name="examples/dtmf-demo/main.cpp"/>
+      <File Name="examples/dtmf-demo/README.md"/>
     </VirtualDirectory>
     <VirtualDirectory Name="tts-demo">
       <File Name="examples/tts-demo/main.cpp"/>
+      <File Name="examples/tts-demo/README.md"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="piphons-demo">
+      <File Name="examples/piphons-demo/README.md"/>
+      <File Name="examples/piphons-demo/main.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
