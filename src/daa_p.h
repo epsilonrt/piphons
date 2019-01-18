@@ -42,8 +42,15 @@ namespace Piphons {
       bool offhookEnabledLevel;
       int ringingBeforeOffhook;
       int ringingSinceHangup;
+      bool toneHangupEnable;
+      unsigned long tonePwMin;
+      unsigned long tonePwMax;
+      int tonePulseCount;
+      unsigned long lastTone;
+      int tonePulseBeforeHanghup;
       DaaHandler userRingingHandler;
       DaaHandler userOffhookHandler;
+      DaaHandler userHangupToneHandler;
       unsigned long lastRinging;
       bool hookFlash;
       bool isOpen;
@@ -56,6 +63,7 @@ namespace Piphons {
       virtual void close ();
 
       static void ringIsr (void * daa);
+      static void toneIsr (void * daa);
 
       PIMP_DECLARE_PUBLIC (Daa)
   };

@@ -35,8 +35,15 @@ namespace Piphons {
     offhookEnabledLevel (ohel),
     ringingBeforeOffhook (8),
     ringingSinceHangup (0),
+    toneHangupEnable (false),
+    tonePwMin (0),
+    tonePwMax (0),
+    tonePulseCount (0),
+    lastTone (0),
+    tonePulseBeforeHanghup (0),
     userRingingHandler (0),
     userOffhookHandler (0),
+    userHangupToneHandler (0),
     lastRinging (0),
     hookFlash (false),
     isOpen (false) {}
@@ -44,8 +51,9 @@ namespace Piphons {
   // ---------------------------------------------------------------------------
   Daa::Private::Private (Daa * q, int rp, int ohp, int tp) :
     Private (q, rp, ohp, false, false)  {
-      
+
     if (tp >= 0) {
+
       tonePin = &gpio.pin (tp);
     }
   }
@@ -55,9 +63,13 @@ namespace Piphons {
     q_ptr (other.q_ptr),
     ringPin (other.ringPin),
     offhookPin (other.offhookPin) ,
-    tonePin (other.tonePin) ,
+    tonePin (other.tonePin),
     ringEnabledLevel (other.ringEnabledLevel),
-    offhookEnabledLevel (other.offhookEnabledLevel) {
+    offhookEnabledLevel (other.offhookEnabledLevel),
+    toneHangupEnable (other.toneHangupEnable),
+    tonePwMin (other.tonePwMin),
+    tonePwMax (other.tonePwMax),
+    tonePulseBeforeHanghup (other.tonePulseBeforeHanghup) {
 
     // requires exclusive ownership to write to *this
     std::unique_lock<std::shared_timed_mutex> lhs (mut, std::defer_lock);
@@ -70,7 +82,10 @@ namespace Piphons {
     ringingSinceHangup = other.ringingSinceHangup;
     userRingingHandler = other.userRingingHandler;
     userOffhookHandler = other.userOffhookHandler;
+    userHangupToneHandler = other.userHangupToneHandler;
     lastRinging = other.lastRinging;
+    tonePulseCount = other.tonePulseCount;
+    lastTone = other.lastTone;
     hookFlash = other.hookFlash;
     isOpen = other.isOpen;
   }
@@ -89,6 +104,12 @@ namespace Piphons {
       ringPin.setMode (Pin::ModeInput);
       ringPin.setPull (ringEnabledLevel ? Pin::PullDown : Pin::PullUp);
       ringPin.attachInterrupt (Private::ringIsr, ringEnabledLevel ? Pin::EdgeRising : Pin::EdgeFalling, this);
+      if (tonePin) {
+
+        tonePin->setMode (Pin::ModeInput);
+        tonePin->setPull (Pin::PullOff);
+        tonePin->attachInterrupt (Private::toneIsr, Pin::EdgeBoth, this);
+      }
       isOpen = true;
     }
     return isOpen;
@@ -98,6 +119,10 @@ namespace Piphons {
   void Daa::Private::close() {
 
     ringPin.detachInterrupt();
+    if (tonePin) {
+
+      tonePin->detachInterrupt();
+    }
     isOpen = false;
   }
 
@@ -168,6 +193,76 @@ namespace Piphons {
     else {
 
       d->offhook (false);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void Daa::Private::toneIsr (void * data) {
+    Private * d;
+    int tonePulseCount, tonePulseBeforeHanghup;
+    DaaHandler userHangupToneHandler;
+    unsigned long now, dt, tonePwMin, tonePwMax;
+    bool toneHangupEnable;
+
+    now = clk.millis();
+    d = reinterpret_cast<Daa::Private *> (data);
+
+    {
+      // requires shared ownership to read from other this data
+      std::shared_lock<std::shared_timed_mutex> lk (d->mut);
+      toneHangupEnable = d->toneHangupEnable;
+      tonePwMin = d->tonePwMin;
+      tonePwMax = d->tonePwMax;
+      tonePulseCount = d->tonePulseCount;
+      tonePulseBeforeHanghup = d->tonePulseBeforeHanghup;
+      userHangupToneHandler = d->userHangupToneHandler;
+    }
+
+    if (toneHangupEnable) {
+
+      if (d->lastTone == 0) {
+        // first edge
+        d->lastTone = now;
+
+      }
+      else {
+
+        dt = now - d->lastTone;
+        d->lastTone = now;
+
+        if ( (dt >= tonePwMin) && (dt <= tonePwMax)) {
+
+          tonePulseCount++;
+          {
+            // requires exclusive ownership to write to tonePulseCount
+            std::lock_guard<std::shared_timed_mutex> lk (d->mut);
+            d->tonePulseCount = tonePulseCount;
+          }
+
+          if (tonePulseCount >= tonePulseBeforeHanghup) {
+
+            d->offhook (false);
+            if (userHangupToneHandler) {
+
+              userHangupToneHandler (d->q_ptr);
+            }
+            tonePulseCount = 0;
+            d->lastTone = 0;
+          }
+        }
+        else {
+
+          // first edge
+          d->lastTone = now;
+        }
+
+        {
+          // requires exclusive ownership to write to tonePulseCount
+          std::lock_guard<std::shared_timed_mutex> lk (d->mut);
+          d->tonePulseCount = tonePulseCount;
+        }
+      }
+      d->tonePin->read();  // phony reading, to erase irq !
     }
   }
 
@@ -266,6 +361,30 @@ namespace Piphons {
 
     std::lock_guard<std::shared_timed_mutex> lk (d->mut);
     d->userOffhookHandler = handler;
+  }
+
+  // ---------------------------------------------------------------------------
+  void Daa::setHangupToneHandler (DaaHandler handler) {
+    PIMP_D (Daa);
+
+    std::lock_guard<std::shared_timed_mutex> lk (d->mut);
+    d->userHangupToneHandler = handler;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Daa::setHangupToneDetect (bool enable,  int tonePulseBeforeHanghup, unsigned long pwMin, unsigned long pwMax) {
+    PIMP_D (Daa);
+
+    if (d->tonePin) {
+      std::lock_guard<std::shared_timed_mutex> lk (d->mut);
+      d->toneHangupEnable = enable;
+      d->tonePwMin = pwMin;
+      d->tonePwMax = pwMax;
+      d->tonePulseBeforeHanghup = tonePulseBeforeHanghup;
+      d->tonePulseCount = 0;
+      return true;
+    }
+    return false;
   }
 
   // ---------------------------------------------------------------------------

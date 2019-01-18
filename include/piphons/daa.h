@@ -39,6 +39,8 @@ namespace Piphons {
 
       void setRingingHandler (DaaHandler handler);
       void setOffhookHandler (DaaHandler handler);
+      void setHangupToneHandler (DaaHandler handler);
+      bool setHangupToneDetect (bool enable, int tonePulseBeforeHanghup = 10, unsigned long tonePwMin = 450, unsigned long tonePwMax = 550);
 
       bool open();
       bool isOpen() const;
