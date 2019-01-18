@@ -48,6 +48,13 @@ void offhookIsr (Daa * daa) { // this function is executed after hookoff
 }
 
 // -----------------------------------------------------------------------------
+void hangupIsr (Daa * daa) { // this function is executed after hangup
+
+  cout << endl << "Remote user hangup !" << endl;
+  loop = false; // drop the flag atomically to tell the main thread to stop
+}
+
+// -----------------------------------------------------------------------------
 void keyIsr (Dtmf * dtmf) {
   static char prev;
   char c;
@@ -81,6 +88,7 @@ void keyIsr (Dtmf * dtmf) {
 
     tts.say ("Au revoir !"); // goodbye message
     loop = false; // drop the flag atomically to tell the main thread to stop
+    cout << endl << "I hung up the phone." << endl;
   }
 
   prev = c; // memorizes the previous character
@@ -93,8 +101,10 @@ int main (int argc, char **argv) {
 
   daa.setRingingHandler (ringIsr);
   daa.setOffhookHandler (offhookIsr);
+  daa.setHangupToneHandler (hangupIsr);
   daa.setHookFlash (true);
   daa.setRingingBeforeOffhook (3);
+  daa.setHangupToneDetect (true, 6, 450, 650);
   daa.open();
 
   dtmf.setKeyHandler (keyIsr);
@@ -114,9 +124,7 @@ int main (int argc, char **argv) {
   tts.close();
   dtmf.close();
   daa.close();
-  cout << endl
-       << "I hung up the phone." << endl
-       << "Have a nice day !" << endl;
+  cout << endl << "Have a nice day !" << endl;
 
   return 0;
 }

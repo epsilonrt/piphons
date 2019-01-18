@@ -32,13 +32,21 @@ void offhookIsr (Daa * daa) { // this function is executed after hookoff
 }
 
 // -----------------------------------------------------------------------------
+void hangupIsr (Daa * daa) { // this function is executed after hangup
+
+  cout << endl << "Remote user hangup !" << endl;
+}
+
+// -----------------------------------------------------------------------------
 int main (int argc, char **argv) {
   Daa daa (ringPin, offhookPin, tonePin);
 
   daa.setRingingHandler (ringIsr);
   daa.setOffhookHandler (offhookIsr);
+  daa.setHangupToneHandler (hangupIsr);
   daa.setHookFlash (true);
   daa.setRingingBeforeOffhook (3);
+  daa.setHangupToneDetect (true, 6, 450, 650);
   daa.open();
 
   cout << "Piphons DAA Example" << endl
@@ -47,9 +55,7 @@ int main (int argc, char **argv) {
   cin.get(); // wait Enter to quit
 
   daa.close();
-  cout << endl
-       << "I hung up the phone." << endl
-       << "Have a nice day !" << endl;
+  cout << endl << "Have a nice day !" << endl;
 
   return 0;
 }
